@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = themeNotifier.value == ThemeMode.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: const Text(
           'My Profile',
@@ -19,7 +22,52 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) {
+                  return Wrap(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.person),
+                        title: const Text('Account Settings'),
+                        onTap: () => Navigator.pop(context),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.dark_mode),
+                        title: Text(isDark ? 'Light Mode' : 'Dark Mode'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          themeNotifier.value = isDark ? ThemeMode.light : ThemeMode.dark;
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: const Text('About App'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          showAboutDialog(
+                            context: context,
+                            applicationName: "Grocery App",
+                            applicationVersion: "2.3",
+                            applicationIcon: const FlutterLogo(),
+                            children: const [Text("Developed by Hajat Ali.")],
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.logout),
+                        title: const Text('Log Out'),
+                        onTap: () => Navigator.pop(context),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
@@ -31,9 +79,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 45,
-                  backgroundImage: NetworkImage(
-                    'https://i.pravatar.cc/150?img=3',
-                  ),
+                  backgroundImage: AssetImage('assets/images/my_pic.jpg'),
                 ),
                 const SizedBox(height: 12),
                 const Text(
@@ -42,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'hajatali @gmail.com',
+                  'hajatali@gmail.com',
                   style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 8),
